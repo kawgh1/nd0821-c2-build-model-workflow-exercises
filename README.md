@@ -11,6 +11,8 @@ pip install mlflow
 
 Install `wandb`
 
+#### Must have account on https://wandb.ai
+
 # Build a Reproducible Model Workflow - Exercises
 
 This repo contains the code for demos, exercises, and exercise solutions.
