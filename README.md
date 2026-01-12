@@ -1,10 +1,14 @@
 ### Requirements
 
 Install `conda`
+
 #### Install MLFlow locally in a virtual env
-`python -m venv venv
+```
+python -m venv venv
 source venv/bin/activate
-pip install mlflow`
+pip install mlflow
+```
+
 Install `wandb`
 
 # Build a Reproducible Model Workflow - Exercises
