@@ -4,7 +4,7 @@ Install `conda`
 
 #### Install MLFlow locally in a virtual env
 ```
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 pip install mlflow
 ```
