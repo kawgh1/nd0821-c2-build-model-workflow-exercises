@@ -12,3 +12,11 @@
 ![defining_the_MLproject_file.png](defining_the_MLproject_file.png)
 
 ![ml_pipeline_flow.png](ml_pipeline_flow.png)
+
+# MLflow in Action
+
+![running_a_component_from_a_script.png](running_a_component_from_a_script.png)
+
+![project_calls_other_projects.png](project_calls_other_projects.png)
+
+![mlflow_in_action.png](mlflow_in_action.png)
