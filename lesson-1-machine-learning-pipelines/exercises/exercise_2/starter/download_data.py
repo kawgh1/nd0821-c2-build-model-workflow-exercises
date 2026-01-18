@@ -11,6 +11,42 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
 
 
+"""
+Download a file and upload it as an artifact to W&B
+
+python download_data.py \
+       --file_url https://raw.githubusercontent.com/scikit-learn/scikit-learn/4dfdfb4e1bb3719628753a4ece995a1b2fa5312a/sklearn/datasets/data/iris.csv \
+       --artifact_name iris \
+       --artifact_type raw_data \
+       --artifact_description "The sklearn IRIS dataset"
+       
+Output:
+
+(venv) ...@MacBook-Pro starter % python3 download_data.py \
+       --file_url https://raw.githubusercontent.com/scikit-learn/scikit-learn/4dfdfb4e1bb3719628753a4ece995a1b2fa5312a/sklearn/datasets/data/iris.csv \
+       --artifact_name iris \
+       --artifact_type raw_data \
+       --artifact_description "The sklearn IRIS dataset"
+2026-01-18 08:33:10,231 Downloading https://raw.githubusercontent.com/scikit-learn/scikit-learn/4dfdfb4e1bb3719628753a4ece995a1b2fa5312a/sklearn/datasets/data/iris.csv ...
+2026-01-18 08:33:10,232 Creating run exercise_2
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: {username} ({username}-j) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.24.0
+wandb: Run data is saved locally in /Users/.../Desktop/nd0821-c2-build-model-workflow-exercises/lesson-1-machine-learning-pipelines/exercises/exercise_2/starter/wandb/run-20260118_083310-h75qgzjw
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run proud-plant-1
+wandb: ⭐️ View project at https://wandb.ai/{username}-j/exercise_2
+wandb: 🚀 View run at https://wandb.ai/{username}-j/exercise_2/runs/h75qgzjw
+2026-01-18 08:33:11,642 Creating artifact
+2026-01-18 08:33:11,652 Logging artifact
+wandb: 🚀 View run proud-plant-1 at: https://wandb.ai/{username}-j/exercise_2/runs/h75qgzjw
+wandb: ⭐️ View project at: https://wandb.ai/{username}-j/exercise_2
+wandb: Synced 5 W&B file(s), 0 media file(s), 2 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260118_083310-h75qgzjw/logs
+
+"""
+
+
 def go(args):
 
     # Derive the base name of the file from the URL
