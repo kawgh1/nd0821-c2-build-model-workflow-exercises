@@ -6,17 +6,19 @@ entry_points:
     parameters:
       file_url:
         description: URL of the file to download
-        type: uri
+        type: string
       artifact_name:
         description: Name for the W&B artifact that will be created
-        type: str
+        type: string
+        default: iris.csv
       artifact_type:
         description: Type of the artifact to create
-        type: str
+        type: string
         default: raw_data
       artifact_description:
         description: Description for the artifact
-        type: str
+        type: string
+        default: Input data
 
     command: >-
       python download_data.py --file_url {file_url} \

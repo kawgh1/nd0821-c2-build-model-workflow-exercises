@@ -1,4 +1,4 @@
-name: download_data
+name: process_data
 conda_env: conda.yml
 
 entry_points:
@@ -6,20 +6,20 @@ entry_points:
     parameters:
       input_artifact:
         description: Fully-qualified artifact name for the input artifact
-        type: uri
-      artifact_name:
+        type: string
+      output_artifact:
         description: Name for the W&B artifact that will be created
-        type: str
-      artifact_type:
+        type: string
+      output_type:
         description: Type of the artifact to create
-        type: str
+        type: string
         default: raw_data
-      artifact_description:
+      output_description:
         description: Description for the artifact
-        type: str
+        type: string
 
     command: >-
       python run.py --input_artifact {input_artifact} \
-                    --artifact_name {artifact_name} \
-                    --artifact_type {artifact_type} \
-                    --artifact_description {artifact_description}
+                    --artifact_name {output_artifact} \
+                    --artifact_type {output_type} \
+                    --artifact_description {output_description}
