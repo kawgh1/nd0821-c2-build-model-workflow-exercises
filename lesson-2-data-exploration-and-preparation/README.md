@@ -122,7 +122,7 @@ Split the preprocessed dataset into **train** and **test** sets for modeling.
     -P stratify="genre"
   ```
   
-![train_test_split_logs_from_wandb.png](train_test_split_logs_from_wandb.png)
+![train_test_split_logs_from_wandb2.png](train_test_split_logs_from_wandb2.png)
 
 ---
 
