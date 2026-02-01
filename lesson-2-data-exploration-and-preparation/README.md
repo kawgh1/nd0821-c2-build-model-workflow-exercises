@@ -121,8 +121,13 @@ Split the preprocessed dataset into **train** and **test** sets for modeling.
     -P test_size=0.3 \
     -P stratify="genre"
   ```
-  
+
+## wandb logs
 ![train_test_split_logs_from_wandb2.png](train_test_split_logs_from_wandb2.png)
+
+## wandb graph
+![wandb_graph.png](wandb_graph.png)
+
 
 ---
 
