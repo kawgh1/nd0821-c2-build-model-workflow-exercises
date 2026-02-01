@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import argparse
+import datetime
 import logging
 import pandas as pd
 import wandb
@@ -10,12 +11,47 @@ logger = logging.getLogger()
 
 
 def go(args):
+    # Initialize W&B run
+    run = wandb.init(
+        project="exercise_5",
+        job_type="preprocessing"
+    )
 
-    run = wandb.init(project="exercise_5", job_type="process_data")
+    # Fetch input artifact
+    artifact = run.use_artifact("exercise_4/genres_mod.parquet:latest")
+    input_path = artifact.file()
 
-    ## YOUR CODE HERE
-    pass
+    # Read data
+    df = pd.read_parquet(input_path)
 
+    # Drop duplicates
+    df = df.drop_duplicates().reset_index(drop=True)
+
+    # Add new feature
+    df['title'].fillna(value='', inplace=True)
+    df['song_name'].fillna(value='', inplace=True)
+    df['text_feature'] = df['title'] + ' ' + df['song_name']
+
+    # Create timestamp for filename
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_filename = f"preprocessed_data_{timestamp}.csv"
+
+    # Save CSV
+    df.to_csv(output_filename, index=False)
+
+    # Upload cleaned data as new artifact
+    artifact_to_upload = wandb.Artifact(
+        name=f"preprocessed_data_{timestamp}.csv",
+        type="dataset",
+        description="Cleaned genres_mod dataset with text_feature"
+    )
+    artifact_to_upload.add_file(output_filename)
+    run.log_artifact(artifact_to_upload)
+
+    # Finish W&B run
+    run.finish()
+
+    print(f"Uploaded artifact {output_filename} to W&B project 'exercise_5'")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

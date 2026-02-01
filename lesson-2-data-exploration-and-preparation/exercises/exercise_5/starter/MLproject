@@ -1,0 +1,6 @@
+name: exercise_5
+conda_env: conda.yml
+
+entry_points:
+  main:
+    command: python run.py
