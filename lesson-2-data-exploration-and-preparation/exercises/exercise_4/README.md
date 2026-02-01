@@ -27,6 +27,14 @@ wandb artifact put \
    parameters (you can skip completely the ``parameters`` section when defining ``main``) and
    the command is simply ``jupyter notebook``, which opens Jupyter.
 
+    Create a VENV in /exercise_4/starter
+   
+   ```bash
+   conda create -n mlflow_tmp python=3.10
+   conda activate mlflow_tmp
+   pip3 install mlflow
+   ```
+
 2. Run the step (``mlflow run .``)
    
 3. Create a notebook and call it ``EDA``
