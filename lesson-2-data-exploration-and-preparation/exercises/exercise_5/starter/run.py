@@ -18,34 +18,41 @@ def go(args):
     )
 
     # Fetch input artifact
+    logger.info("Fetching artifact...")
     artifact = run.use_artifact("exercise_4/genres_mod.parquet:latest")
     input_path = artifact.file()
 
     # Read data
+    logger.info("Reading dataframe...")
     df = pd.read_parquet(input_path)
 
     # Drop duplicates
+    logger.info("Starting preprocessing...")
     df = df.drop_duplicates().reset_index(drop=True)
 
     # Add new feature
     df['title'].fillna(value='', inplace=True)
     df['song_name'].fillna(value='', inplace=True)
+    # we know the column 'text_feature' is available at run time through a feature store
+    # if it were not, then we should not do it here
     df['text_feature'] = df['title'] + ' ' + df['song_name']
 
     # Create timestamp for filename
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_filename = f"preprocessed_data_{timestamp}.csv"
+    # output_filename = f"preprocessed_data_{timestamp}.csv"
+    output_filename = f"preprocessed_data.csv" # use version .csvs in prod but it complicates the exercise
 
     # Save CSV
     df.to_csv(output_filename, index=False)
 
     # Upload cleaned data as new artifact
     artifact_to_upload = wandb.Artifact(
-        name=f"preprocessed_data_{timestamp}.csv",
+        name=f"preprocessed_data.csv",
         type="dataset",
         description="Cleaned genres_mod dataset with text_feature"
     )
     artifact_to_upload.add_file(output_filename)
+    # attach artifact to the current run
     run.log_artifact(artifact_to_upload)
 
     # Finish W&B run

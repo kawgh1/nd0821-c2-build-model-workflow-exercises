@@ -3,4 +3,14 @@ conda_env: conda.yml
 
 entry_points:
   main:
-    command: python run.py
+    parameters:
+      input_artifact: {type: str, default: "exercise_4/genres_mod.parquet:latest"}
+      artifact_name: {type: str, default: "preprocessed_data.csv"}
+      artifact_type: {type: str, default: "dataset"}
+      artifact_description: {type: str, default: "Cleaned genres_mod with text_feature"}
+    command: >
+      python run.py
+      --input_artifact {input_artifact}
+      --artifact_name {artifact_name}
+      --artifact_type {artifact_type}
+      --artifact_description "{artifact_description}"

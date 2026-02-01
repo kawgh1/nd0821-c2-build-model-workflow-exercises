@@ -15,58 +15,64 @@ logger = logging.getLogger()
 
 def go(args):
 
+    # Start W&B run
     run = wandb.init(project="exercise_6", job_type="split_data")
+    logger.info("W&B run initialized...")
 
-    logger.info("Downloading and reading artifact")
+    # Download and read artifact
+    logger.info(f"Downloading artifact: {args.input_artifact}...")
     artifact = run.use_artifact(args.input_artifact)
     artifact_path = artifact.file()
+    df = pd.read_csv(artifact_path, low_memory=False)
+    logger.info(f"Artifact loaded: {df.shape[0]} rows, {df.shape[1]} columns...")
 
     df = pd.read_csv(artifact_path, low_memory=False)
 
-    # Split model_dev/test
-    logger.info("Splitting data into train and test")
+    # Train/test split
+    stratify_col = df[args.stratify] if args.stratify != 'null' else None
+    logger.info(f"Splitting data with test_size={args.test_size}, stratify={args.stratify}...")
     splits = {}
+    splits["train"], splits["test"] = train_test_split(
+        df,
+        test_size=args.test_size,
+        stratify=stratify_col,
+        random_state=args.random_state
+    )
+    logger.info(f"Split done: train={splits['train'].shape[0]}, test={splits['test'].shape[0]}...")
 
-    ###################################
-    # COMPLETE the following line     #
-    ###################################
+    # Make sure local directory exists
+    os.makedirs(args.artifact_root, exist_ok=True)
 
-    splits["train"], splits["test"] = # USE train_test_split here to split df according to the provided args.test_size
+    # Save splits locally and log artifacts
+    for split_name, split_df in splits.items():
+        local_path = os.path.join(args.artifact_root, f"{split_name}.csv")
+        split_df.to_csv(local_path, index=False)
+        logger.info(f"Saved {split_name} split locally at {local_path}...")
 
-    # Now we save the artifacts. We use a temporary directory so we do not leave
-    # any trace behind
-    with tempfile.TemporaryDirectory() as tmp_dir:
+        # Log to W&B
+        artifact = wandb.Artifact(
+            name=f"{args.artifact_root}_{split_name}.csv",
+            type=args.artifact_type,
+            description=f"{split_name} split of dataset {args.input_artifact}"
+        )
+        artifact.add_file(local_path)
+        run.log_artifact(artifact)
+        artifact.wait()
+        logger.info(f"Uploaded {split_name} split to W&B as artifact...")
 
-        for split, df in splits.items():
+    run.finish()
+    logger.info("W&B run finished...")
 
-            # Make the artifact name from the provided root plus the name of the split
-            artifact_name = f"{args.artifact_root}_{split}.csv"
-
-            # Get the path on disk within the temp directory
-            temp_path = os.path.join(tmp_dir, artifact_name)
-
-            logger.info(f"Uploading the {split} dataset to {artifact_name}")
-
-            # Save then upload to W&B
-            df.to_csv(temp_path)
-
-            artifact = wandb.Artifact(
-                name=artifact_name,
-                type=args.artifact_type,
-                description=f"{split} split of dataset {args.input_artifact}",
-            )
-            artifact.add_file(temp_path)
-
-            logger.info("Logging artifact")
-            run.log_artifact(artifact)
-
-            # This waits for the artifact to be uploaded to W&B. If you
-            # do not add this, the temp directory might be removed before
-            # W&B had a chance to upload the datasets, and the upload
-            # might fail
-            artifact.wait()
-
-
+    '''
+    run with: 
+    
+        mlflow run . \
+      -P input_artifact="exercise_5/preprocessed_data.csv:latest" \
+      -P artifact_root="data" \
+      -P artifact_type="dataset" \
+      -P test_size=0.3 \
+      -P stratify="genre"
+    '''
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Split a dataset into train and test",
