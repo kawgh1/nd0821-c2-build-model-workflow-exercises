@@ -43,7 +43,7 @@ Prepare the raw songs dataset for machine learning.
     ```python
     df['title'].fillna('', inplace=True)
     df['song_name'].fillna('', inplace=True)
-    df['text_feature'] = df['title'] + ' ' + df['song_name']
+    df['text_feature'] = df['title'] + ' ' + df['song_name'] 
     ```
 * Log the preprocessed data to W&B as `preprocessed_data.csv`.
 
