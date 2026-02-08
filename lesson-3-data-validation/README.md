@@ -263,6 +263,6 @@ It provides:
 - HTML reports showing histograms and other useful information about the dataset
 - However, it has a pretty steep learning curve.
 
-![great-expectations.png](great-expectations.png)
+![great-expectations.png](screenshots/great-expectations.png)
 
-![great-expectations-flow.png](great-expectations-flow.png)
+![great-expectations-flow.png](screenshots/great-expectations-flow.png)
