@@ -19,7 +19,10 @@ def data():
 
     return sample1, sample2
 
-
+'''
+Remember that the 2 sample KS test is used to test whether two vectors come from the same distribution (null hypothesis), 
+or from two different distributions (alternative hypothesis), and it is non-parametric.
+'''
 def test_kolmogorov_smirnov(data):
 
     sample1, sample2 = data
@@ -45,7 +48,24 @@ def test_kolmogorov_smirnov(data):
 
         # Use the 2-sample KS test (scipy.stats.ks_2sample) on the column
         # col
-        ts, p_value = None, None # YOUR CODE HERE
+        # 2-sample KS test
+        ts, p_value = scipy.stats.ks_2samp(
+            sample1[col].dropna(),
+            sample2[col].dropna(),
+        )
 
         # Add an assertion so that the test fails if p_value > alpha_prime
-        # YOUR CODE HERE
+        # Fail if distributions are statistically different
+        assert p_value > alpha_prime, (
+            f"KS test failed for column {col}: p_value={p_value}"
+        )
+
+        ## To run the test:     mlflow run .
+
+        ## Output:
+        ## E           AssertionError: KS test failed for column loudness: p_value=nan
+        ## E           assert nan > 0.005116196891823743
+
+        ## NOTE:    Just because a certain test fails does NOT mean there is anything wrong
+        ##          with your dataset. It only means to take a look and understand why the
+        ##          test failed.
