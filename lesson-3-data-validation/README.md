@@ -139,3 +139,130 @@ def data(request):
     local_path = run.use_artifact(input_artifact).file()
     return pd.read_csv(local_path)
 ```
+
+### Example from Exercise 9
+
+```python
+import scipy.stats
+
+
+# make this test accept the fixtures defined in the
+# conftest.py file (data and ks_alpha)
+def test_kolmogorov_smirnov(data, ks_alpha):
+
+    sample1, sample2 = data
+
+    columns = [
+        "danceability",
+        "energy",
+        "loudness",
+        "speechiness",
+        "acousticness",
+        "instrumentalness",
+        "liveness",
+        "valence",
+        "tempo",
+        "duration_ms"
+    ]
+
+    alpha_prime = 1 - (1 - ks_alpha)**(1 / len(columns))
+
+    for col in columns:
+
+        ts, p_value = scipy.stats.ks_2samp(sample1[col].dropna(), sample2[col].dropna())
+
+        # NOTE: as always, the p-value should be interpreted as the probability of
+        # obtaining a test statistic (TS) equal or more extreme that the one we got
+        # by chance, when the null hypothesis is true. If this probability is not
+        # large enough, this dataset should be looked at carefully, hence we fail
+        assert p_value > alpha_prime, f"KS test failed for column {col}: p_value={p_value}"
+
+    ## To run:
+
+    '''
+      pytest test_data.py \
+        --reference_artifact="exercise_6/data_train.csv:latest" \
+        --sample_artifact="exercise_6/data_test.csv:latest" \
+        --ks_alpha=0.05
+    '''
+```
+
+### Run again at a very high ks_alpha, test will fail
+
+```bash
+pytest test_data.py \
+--reference_artifact="exercise_6/data_train.csv:latest" \
+--sample_artifact="exercise_6/data_test.csv:latest" \
+--ks_alpha=0.9    
+```
+
+### Understanding `ks_alpha` in Kolmogorov-Smirnov Tests
+
+`ks_alpha` is the **significance threshold** used in the Kolmogorov-Smirnov (KS) test when comparing train and test datasets.
+
+---
+
+#### 3.1 KS Test Purpose
+
+The KS test compares two samples to determine if they **come from the same distribution**.
+
+- **Null hypothesis (H0):** Train and test distributions are the same
+- **Alternative hypothesis (H1):** Train and test distributions are different
+
+The test returns:
+
+- `ts` → KS statistic (maximum difference between cumulative distributions)
+- `p_value` → probability of observing `ts` (or more extreme) if H0 is true
+
+---
+
+#### 3.2 Role of `ks_alpha`
+
+`ks_alpha` sets the **threshold for rejecting the null hypothesis**.
+
+- If `p_value <= ks_alpha` → reject H0 → train/test distributions are likely different
+- If `p_value > ks_alpha` → do not reject H0 → distributions are similar enough
+
+With multiple columns, a Bonferroni-style correction is applied:
+
+```python
+alpha_prime = 1 - (1 - ks_alpha)**(1 / len(columns))
+```
+
+This ensures the overall Type I error rate is approximately `ks_alpha` across all features.
+
+---
+
+#### 3.3 Intuition
+
+- **Low **``** (e.g., 0.05):** tolerant of small differences; only large distribution changes fail
+- **High **``** (e.g., 0.9):** very strict; even tiny differences can fail the test
+
+In short:
+
+> `ks_alpha` represents your tolerance for considering the train and test distributions "similar enough".
+
+---
+
+### References
+
+- [SciPy ks\_2samp documentation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ks_2samp.html)
+- [Kolmogorov-Smirnov Test - Wikipedia](https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test)
+
+
+### Other Tools
+
+**[Great Expectations](https://greatexpectations.io/)** is an alternative tool to validate, document, and profile your data. 
+
+Great Expectations is a testing library to compliment `PyTest` and is useful for **Non-Deterministic Tests**.
+It can give critical insights as to why a non-deterministic test is passing or failing.
+
+It provides:
+- A rich set of pre-defined tests
+- Automatic profiling: it can generate a set of tests based on an input dataset, that can then be applied to a different dataset
+- HTML reports showing histograms and other useful information about the dataset
+- However, it has a pretty steep learning curve.
+
+![great-expectations.png](great-expectations.png)
+
+![great-expectations-flow.png](great-expectations-flow.png)
