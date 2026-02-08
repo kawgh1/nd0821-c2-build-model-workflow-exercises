@@ -102,3 +102,40 @@ If the one we need is not there, we can also look at **[statsmodels](https://www
 - **[Bonferroni correction](https://en.wikipedia.org/wiki/Bonferroni_correction)**
 - **Example of multiple hypothesis testing in astronomy:**
     - **[Precision and Recall Trade-off and Multiple Hypothesis Testing](https://medium.com/data-science/precision-and-recall-trade-off-and-multiple-hypothesis-testing-family-wise-error-rate-vs-false-71a85057ca2b)**
+
+## 3. Parameters in PyTest
+
+We can introduce parameters to the pytest command line by using the conftest.py file.
+
+In this file we can add a special function called pytest_addoption and use a special fixture made available by pytest, 
+called parser, like this:
+
+```python
+def pytest_addoption(parser):
+    parser.addoption("--input_artifact", action="store")
+```
+
+The **`.addoption`** method of the parser object adds an option that is going to be available on the command line. 
+By having this code in conftest.py we can now run pytest as:
+
+```bash
+> pytest . -vv --input_artifact example/my_artifact:latest
+```
+We can now use that optional value in tests and other fixtures. This is an example where we modify the data fixture 
+we have seen before to use the value of the **`--input_artifact`** option:
+
+```python
+import pytest
+import pandas as pd
+
+def pytest_addoption(parser):
+    parser.addoption("--input_artifact", action="store")
+
+@pytest.fixture(scope="session")
+def data(request):
+    input_artifact = request.config.option.input_artifact
+    if input_artifact is None:
+        pytest.fail("--input_artifact missing on command line")
+    local_path = run.use_artifact(input_artifact).file()
+    return pd.read_csv(local_path)
+```
