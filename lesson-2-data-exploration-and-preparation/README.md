@@ -8,6 +8,8 @@ This series of exercises demonstrates a basic **ML workflow** using **MLflow** a
 2. Artifact management with W&B
 3. Splitting datasets for model development
 
+![what-is-data-validation](screenshots/what-is-data-validation.png)
+
 ---
 
 ## Exercise 4: Data Exploration & Preprocessing
@@ -45,6 +47,12 @@ Prepare the raw songs dataset for machine learning.
     ```
 * Log the preprocessed data to W&B as `preprocessed_data.csv`.
 
+![pre-processing.png](screenshots/pre-processing.png)
+
+![exploratory-data-analysis.png](screenshots/exploratory-data-analysis.png)
+
+
+
 ---
 
 ## Exercise 5: Artifact Management
@@ -78,7 +86,7 @@ Ensure reproducibility by saving cleaned data as a W&B artifact.
 **Goal:**
 Split the preprocessed dataset into **train** and **test** sets for modeling.
 
-![test_train_split_diagram.png](test_train_split_diagram.png)
+![test_train_split_diagram.png](screenshots/test_train_split_diagram.png)
 
 **Steps:**
 
@@ -123,10 +131,10 @@ Split the preprocessed dataset into **train** and **test** sets for modeling.
   ```
 
 ## wandb logs
-![train_test_split_logs_from_wandb2.png](train_test_split_logs_from_wandb2.png)
+![train_test_split_logs_from_wandb2.png](screenshots/train_test_split_logs_from_wandb2.png)
 
 ## wandb graph
-![wandb_graph.png](wandb_graph.png)
+![wandb_graph.png](screenshots/wandb_graph.png)
 
 
 ---
@@ -158,3 +166,39 @@ train.csv               test.csv
 ```
 
 This diagram illustrates the flow from raw data → preprocessing → train/test split → W&B artifacts.
+
+## Feature Store
+
+A feature store is a centralized system for storing, managing, and serving features that are 
+used for machine learning models. It ensures that features used during training are consistent 
+with what is available at inference, and it helps avoid duplication or inconsistencies across 
+projects and environments.
+
+### Key Points:
+- Central repository: Features are stored in a structured way for easy reuse.
+- Consistency: Guarantees that the exact same computation used in training is available in production.
+- Versioning: Each feature or dataset can have multiple versions, making experiments reproducible.
+- Online vs offline:
+    - Offline features: used during training (usually in batch)
+    - Online features: served in real-time at inference
+
+#### When is it created or updated?
+**Created:**
+
+Typically after preprocessing and feature engineering is finalized during training.
+For example, once you compute text_feature = title + " " + song_name, this feature can be registered in the feature store.
+
+**Updated:**
+
+When new features are added or existing features are recomputed.
+Can also be updated when new versions of the dataset arrive (e.g., daily updates for fresh data).
+
+### Rule of thumb:
+
+- Only store features that your model actually needs and that are computable consistently at inference.
+- Features like text_feature in your exercise are perfect candidates because they are deterministic 
+combinations of input columns, so they can be computed both in training and at inference.
+
+![feature-store](screenshots/feature-store.png)
+
+![feature-store-in-action](screenshots/feature-store-in-action.png)
