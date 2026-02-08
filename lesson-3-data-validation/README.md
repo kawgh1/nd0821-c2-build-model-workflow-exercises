@@ -28,14 +28,14 @@ It probes for violation of an assumption about the data using **Statistical Hypo
 - Used to detect trends or anomalies, not exact values
 - Failures usually indicate suspicion, not certainty
 
-#### Examples:
-1. Dataset Reference testing
+### Examples:
+### 1. Dataset Reference Testing
 <br>
 - It is common to compare the current dataset to a previous one and examine key attributes
 
 ![dataset-reference-testing-examples](dataset-reference-testing-examples.png)
 
-2. Hypothesis Testing
+### 2. Hypothesis Testing
 <br>
 - The Null Hypothesis is our assumption about the data, while the Alternative Hypothesis is a violation of that assumption.
 
