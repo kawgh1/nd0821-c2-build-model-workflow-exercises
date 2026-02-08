@@ -6,7 +6,7 @@
 2. **Non-Deterministic Testing**
 3. **Using PyTest with parameters + other tools**
 
-### Deterministic Testing
+## 1. Deterministic Testing
 A data test is deterministic if it produces the same result every time it is run on the same input, 
 without relying on randomness or external factors.
 
@@ -15,7 +15,7 @@ without relying on randomness or external factors.
 - Independent of timing, randomness, or environment
 - Measures attributes that can be consistently verified, like column names, types, ranges, or allowed categories
 
-### Non-Deterministic Testing
+## 2. Non-Deterministic Testing
 A data test is non-deterministic if it may produce different results across runs on the same input 
 because it depends on randomness, sampling, time, or external state.
 
@@ -29,15 +29,15 @@ It probes for violation of an assumption about the data using **Statistical Hypo
 - Failures usually indicate suspicion, not certainty
 
 ### Examples:
-### 1. Dataset Reference Testing
+### 2.1 Dataset Reference Testing
 - It is common to compare the current dataset to a previous one and examine key attributes
 ![dataset-reference-testing-examples](screenshots/dataset-reference-testing-examples.png)
 
-### 2. Hypothesis Testing
+### 2.2 Hypothesis Testing
 - The Null Hypothesis is our assumption about the data, while the Alternative Hypothesis is a violation of that assumption.
 ![hypothesis-testing](screenshots/hypothesis-testing.png)
 
-### 2.1 T-Test Example
+### 2.3 T-Test Example
 - In this case we consider the t-test. We consider the two samples, we compute the Test Statistic for the t-test, 
 we compute the p-value and check if the p-value is larger or smaller than our pre-determined threshold (0.05).
 
