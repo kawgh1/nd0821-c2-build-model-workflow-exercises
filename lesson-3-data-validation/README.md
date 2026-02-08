@@ -105,10 +105,10 @@ If the one we need is not there, we can also look at **[statsmodels](https://www
 
 ## 3. Parameters in PyTest
 
-We can introduce parameters to the pytest command line by using the conftest.py file.
+We can introduce parameters to the pytest command line by using the **`conftest.py`** file.
 
-In this file we can add a special function called pytest_addoption and use a special fixture made available by pytest, 
-called parser, like this:
+In this file we can add a special function called **`pytest_addoption`** and use a special fixture made available by pytest, 
+called **`parser`**, like this:
 
 ```python
 def pytest_addoption(parser):
