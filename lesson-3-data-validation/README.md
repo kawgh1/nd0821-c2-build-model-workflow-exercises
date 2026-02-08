@@ -99,6 +99,6 @@ scipy contains many statistical **[tests](https://docs.scipy.org/doc/scipy/refer
 If the one we need is not there, we can also look at **[statsmodels](https://www.statsmodels.org/stable/stats.html)**.
 
 ### Note: Bonferroni correction for multiple hypothesis testing
-[Bonferroni correction](https://en.wikipedia.org/wiki/Bonferroni_correction)
-Example of multiple hypothesis testing in astronomy:
-[Precision and Recall Trade-off and Multiple Hypothesis Testing](https://medium.com/data-science/precision-and-recall-trade-off-and-multiple-hypothesis-testing-family-wise-error-rate-vs-false-71a85057ca2b)
+- [Bonferroni correction](https://en.wikipedia.org/wiki/Bonferroni_correction)
+- Example of multiple hypothesis testing in astronomy:
+    - [Precision and Recall Trade-off and Multiple Hypothesis Testing](https://medium.com/data-science/precision-and-recall-trade-off-and-multiple-hypothesis-testing-family-wise-error-rate-vs-false-71a85057ca2b)
