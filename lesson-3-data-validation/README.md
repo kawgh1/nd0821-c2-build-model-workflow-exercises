@@ -36,3 +36,27 @@ It probes for violation of an assumption about the data using **Statistical Hypo
 ### 2. Hypothesis Testing
 - The Null Hypothesis is our assumption about the data, while the Alternative Hypothesis is a violation of that assumption.
 ![hypothesis-testing](hypothesis-testing.png)
+
+### 2.1 T-Test Example
+- In this case we consider the t-test. We consider the two samples, we compute the Test Statistic for the t-test, 
+we compute the p-value and check if the p-value is larger or smaller than our pre-determined threshold (0.05).
+
+If it is larger, we do not reject the null hypothesis which means that our test passes. 
+If it is smaller, we reject the null hypothesis. 
+
+This does not necessarily mean that there is something wrong with our dataset (because depending on the threshold we used, 
+the test has a probability of false positives that is not zero), but we should look at it closely:
+
+![t-test-hypothesis-testing](t-test-hypothesis-testing.png)
+
+### NOTE: each statistical test comes with its own assumptions and hypothesis.
+If these assumptions are violated, the statistical test becomes unreliable. 
+Always verify what are the assumptions of the statistical test you are planning to use, 
+and check whether they are justified in your specific case.
+
+### NOTE: Repeating these tests thousands of times are bound to have a few false positives.
+As datasets change over time, there are bound to be false positives that violate our test assumptions.
+**However, it is better to have a few false positives from time to time, than to have a dataset that is drastically
+different than what we expect.**
+
+![statistical-testing](statistical-testing.png)
