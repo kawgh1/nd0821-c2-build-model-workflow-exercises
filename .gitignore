@@ -6,3 +6,5 @@
 *.idea*
 */mlruns*
 */outputs*
+/lesson-3-data-validation/exercises/exercise_8/starter/venv/
+/venv/

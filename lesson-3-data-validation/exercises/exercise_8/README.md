@@ -29,3 +29,12 @@ scipy.stats.ks_2samp(data1[col], data2[col], alternative='two-sided')
 Remember that the 2 sample KS test is used to test whether two vectors come from the same
 distribution (null hypothesis), or from two different distributions (alternative hypothesis),
 and it is non-parametric.
+
+To run the test using **`mlflow`** if `mlflow` is not installed globally.
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install mlflow wandb pandas scipy pytest scikit-learn
+mlflow run .
+```
