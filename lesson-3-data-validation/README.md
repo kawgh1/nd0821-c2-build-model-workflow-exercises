@@ -95,5 +95,5 @@ especially if you are applying the test on multiple columns. See this blog
 ![post](https://towardsdatascience.com/precision-and-recall-trade-off-and-multiple-hypothesis-testing-family-wise-error-rate-vs-false-71a85057ca2b)
 for details and for strategies to account for that.
 
-scipy contains many statistical ![tests](https://docs.scipy.org/doc/scipy/reference/stats.html#statistical-tests. 
-If the one we need is not there, we can also look at ![statsmodels](https://www.statsmodels.org/stable/stats.html).
+scipy contains many statistical [tests](https://docs.scipy.org/doc/scipy/reference/stats.html#statistical-tests). 
+If the one we need is not there, we can also look at [statsmodels](https://www.statsmodels.org/stable/stats.html).
