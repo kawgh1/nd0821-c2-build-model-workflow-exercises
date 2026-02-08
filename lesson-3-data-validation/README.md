@@ -82,11 +82,11 @@ def test_compatible_mean(sample1, sample2):
     return ts, p_value
 ```
 
-The function from `scipy` returns the p-value of the test, in this case the t-test. 
+The function from **`scipy`** returns the p-value of the test, in this case the t-test. 
 We just need to assert that such p-value is larger than the pre-determined threshold, 
 so that the tests fails if that's not the case.
 
-Once again, because we selected a threshold of `0.05`, if we repeat the test on 100 different datasets 
+Once again, because we selected a threshold of **`0.05`**, if we repeat the test on 100 different datasets 
 we have an expectation of 5 false positives. As always, selecting the threshold is a balancing act 
 between sensitivity of the test and number of false positives.
 
