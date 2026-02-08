@@ -49,7 +49,7 @@ the test has a probability of false positives that is not zero), but we should l
 
 ![t-test-hypothesis-testing](t-test-hypothesis-testing.png)
 
-### NOTE: each statistical test comes with its own assumptions and hypothesis.
+### NOTE: Each statistical test comes with its own assumptions and hypothesis.
 If these assumptions are violated, the statistical test becomes unreliable. 
 Always verify what are the assumptions of the statistical test you are planning to use, 
 and check whether they are justified in your specific case.
@@ -60,3 +60,40 @@ As datasets change over time, there are bound to be false positives that violate
 different than what we expect.**
 
 ![statistical-testing](statistical-testing.png)
+
+```python
+import scipy.stats
+
+
+def test_compatible_mean(sample1, sample2):
+    """
+    We check if the mean of the two samples is not
+    significantly different
+    """
+    ts, p_value = scipy.stats.ttest_ind(
+        sample1, sample2, equal_var=False, alternative="two-sided"
+    )
+
+    # Pre-determined threshold
+    alpha = 0.05
+
+    assert p_value >= alpha, "T-test rejected the null hyp. at the 2 sigma level"
+
+    return ts, p_value
+```
+
+The function from `scipy` returns the p-value of the test, in this case the t-test. 
+We just need to assert that such p-value is larger than the pre-determined threshold, 
+so that the tests fails if that's not the case.
+
+Once again, because we selected a threshold of `0.05`, if we repeat the test on 100 different datasets 
+we have an expectation of 5 false positives. As always, selecting the threshold is a balancing act 
+between sensitivity of the test and number of false positives.
+
+You also need to take into account the multiple-hypothesis testing problem, 
+especially if you are applying the test on multiple columns. See this blog 
+![post](https://towardsdatascience.com/precision-and-recall-trade-off-and-multiple-hypothesis-testing-family-wise-error-rate-vs-false-71a85057ca2b)
+for details and for strategies to account for that.
+
+scipy contains many statistical ![tests](https://docs.scipy.org/doc/scipy/reference/stats.html#statistical-tests. 
+If the one we need is not there, we can also look at ![statsmodels](https://www.statsmodels.org/stable/stats.html).
