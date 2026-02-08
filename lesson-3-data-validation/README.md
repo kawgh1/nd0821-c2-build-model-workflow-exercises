@@ -2,9 +2,9 @@
 
 ## Overview
 
-1. Deterministic Testing
-2. Non-Deterministic Testing
-3. Using PyTest with parameters + other tools
+**1. Deterministic Testing**
+**2. Non-Deterministic Testing**
+**3. Using PyTest with parameters + other tools**
 
 ### Deterministic Testing
 A data test is deterministic if it produces the same result every time it is run on the same input, 
