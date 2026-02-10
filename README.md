@@ -52,18 +52,18 @@ file and `starter` and `solution` directories.
     - Its neural net module (MLPClassifier) is mostly educational / legacy
 
 ## Very common setup:
-- scikit-learn → data prep, baselines, classical models
-- PyTorch → deep learning models
-- XGBoost / LightGBM → tabular production work
+- **scikit-learn** → data prep, baselines, classical models
+- **PyTorch** → deep learning models
+- **XGBoost** / LightGBM → tabular production work
 - ONNX / TorchScript / Triton → serving
 
 - What about TensorFlow?
   - Still used (especially legacy systems)
   - Less common for new projects
-  - PyTorch has won mindshare and hiring
+  - **PyTorch** has won mindshare and hiring
 
 ## Bottom line
 
-Neural networks in production → PyTorch
-Classical ML in production → scikit-learn + XGBoost
-scikit-learn NN ≠ industry practice
+- Neural networks in production → **PyTorch**
+- Classical ML in production → **scikit-learn** + **XGBoost**
+- **scikit-learn** NN ≠ industry practice
