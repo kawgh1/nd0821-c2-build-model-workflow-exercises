@@ -7,6 +7,8 @@ related to the entire pipeline from the configuration file. Make sure to open ``
 and familiarize yourself with its structure, in particular the new ``random_forest_pipeline``
 section.
 
+# See wandb logs here https://wandb.ai/krseven-j/exercise_11
+
 ## Experiment 1
 Let's start by overriding the ``max_depth`` parameter of the ``random_forest_pipeline.random_forest`` 
 section of the configuration file (``config.yaml``):

@@ -183,3 +183,5 @@ to run in production, adopting a Feature Store would represent a good solution.
 See the earlier lesson on Data Exploration and Preparation for an introduction to the concept of Feature Stores.
 
 ![feature-store.png](screenshots/feature-store.png)
+
+![hydra-sweep-wandb.png](screenshots/hydra-sweep-wandb.png)

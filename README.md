@@ -20,6 +20,10 @@ With these 3 key steps in place, we can perform experimentation following this p
 ## Train and Evaluate
 ![experiment-tracking.png](experimentation-tracking.png)
 
+## Hydra-sweep on wandb
+
+![hydra-sweep-wandb.png](lesson-4-training-validation-experiment-tracking/screenshots/hydra-sweep-wandb.png)
+
 ### Requirements
 
 Install `conda`
