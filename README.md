@@ -1,6 +1,24 @@
 # Overview
 
+## Developing an ML pipeline is an iterative process made of trials and errors. 
+In order to avoid chaos we need to:
+- Assume we are going to iterate a lot
+- Give ourselves the time to iterate (reasonable deadlines)
+- Be systematic (if possible, change one thing at the time to keep an intuition of causality)
+- Learn from every trial
+- **Be clear on our objectives and stop once we reach them**
+
 ![real-ml-development-lifecycle.png](real-ml-development-lifecycle.png)
+
+So how do we bring order exactly?
+
+- Version our data
+- Version our code
+- Track every experiment
+With these 3 key steps in place, we can perform experimentation following this process:
+
+## Train and Evaluate
+![experiment-tracking.png](experimentation-tracking.png)
 
 ### Requirements
 
