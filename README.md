@@ -22,6 +22,8 @@ With these 3 key steps in place, we can perform experimentation following this p
 
 ## Hydra-sweep on wandb
 
+- https://wandb.ai/krseven-j/exercise_11
+
 ![hydra-sweep-wandb.png](lesson-4-training-validation-experiment-tracking/screenshots/hydra-sweep-wandb.png)
 
 ### Requirements
