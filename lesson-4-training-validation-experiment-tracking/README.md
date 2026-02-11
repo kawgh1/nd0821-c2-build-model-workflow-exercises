@@ -185,3 +185,108 @@ See the earlier lesson on Data Exploration and Preparation for an introduction t
 ![feature-store.png](screenshots/feature-store.png)
 
 ![hydra-sweep-wandb.png](screenshots/hydra-sweep-wandb.png)
+
+## Exporting
+
+### What does exporting mean?
+Exporting means packaging our inference pipeline/model into a format that can be saved to disk, and it is understood
+by downstream tools (for example, production deployment).
+
+- 
+
+We can export our inference pipeline/model using mlflow. MLflow provides a standard format for model exports that 
+is accepted by many downstream tools. Each export can contain multiple flavors for the same model. A flavor is a 
+particular subformat for the model. A downstream tools could support some flavors but not others. Of course, 
+the exported artifact can also be re-read by mlflow. Finally, the export contains also all the information 
+to recreate the environment for the model with all the right versions of all the dependencies.
+
+MLflow provides several **![MLflow flavors](https://www.mlflow.org/docs/latest/ml/model/#built-in-model-flavors)** 
+out of the box, and can natively export models from 
+**sklearn, pytorch, Keras, ONNX and also a generic python function** flavor that can be used for custom things.
+
+When generating the model export we can provide two optional but important elements:
+
+A signature, which contains the input and output schema for the data. This allows downstream tools to catch 
+obvious schema problems.
+Some input examples: these are invaluable for testing that everything works in downstream task
+Normally MLflow figures out automatically the environment that the model need to work appropriately. 
+However, this environment can also be ![explicitly controlled](https://www.mlflow.org/docs/latest/api_reference/python_api/mlflow.sklearn.html#mlflow.sklearn.save_model). Finally, the exported model 
+can be ![easily converted](https://www.mlflow.org/docs/latest/ml/model/#deploy-mlflow-models) to a Docker image that provides a REST API for the model.
+
+![mlflow-models.png](screenshots/mlflow-models.png)
+
+![predefined-export-functions.png](screenshots/predefined-export-functions.png)
+
+- Mlflow allows exporting a model as a docker image
+![docker-export.png](screenshots/docker-export.png)
+
+- Example:
+  - ```python
+        from sklearn.pipeline import Pipeline
+        import mlflow.sklearn
+        from mlflow.models import infer_signature
+
+        # Define and fit pipeline
+        pipe = Pipeline(...)
+        pipe.fit(X_train, y_train)
+        pred = pipe.predict(X_test)
+    
+        # The signature of the inference artifact can be inferred from the data and from the predictions of the pipeline:
+        signature = infer_signature(X_test, pred)
+    
+        # Get signature and export inference artifact
+        export_path = "model_dir"
+
+        mlflow.sklearn.save_model(
+          pipe,  # our pipeline
+          export_path,  # Path to a directory for the produced package
+          signature=signature, # input and output schema
+          input_example=X_test.iloc[:5]  # the first few examples
+        )
+        # Then, we can upload the created artifact as usual:
+
+        artifact = wandb.Artifact(...)
+        # NOTE that we use .add_dir and not .add_file
+        # because the export directory contains several
+        # files
+        artifact.add_dir(export_path)
+        run.log_artifact(artifact)
+    ```
+    
+![model-export-wandb.png](exercises/exercise_12/model-export-wandb.png)
+
+## Test your final artifact and mark for production
+![final-artifact.png](final-artifact.png)
+
+We evaluate the inference artifact against the test dataset after export, i.e., 
+we load the exported inference artifact in a different component (the test component) 
+and we evaluate its performances. We do this so we are testing exactly what will be used in production.
+
+Thus, within the component evaluating the inference artifact we can do:
+
+```python
+    model_export_path = run.use_artifact(args.model_export).download()
+
+     pipe = mlflow.sklearn.load_model(model_export_path)
+   ```
+
+to load the inference artifact. Note that the model export artifact (aka the inference artifact) 
+contains several files, so we need the path to the directory containing the files. Therefore, we use `.download()` 
+and not file() as we did so far.
+
+Once we have reloaded our pipeline, we can test it as usual, for example computing the ROC metric:
+
+```python
+pred_proba = pipe.predict_proba(X_test)
+score = roc_auc_score(y_test, pred_proba, average="macro", multi_class="ovo")
+run.summary["AUC"] = score
+```
+
+For every experiment we are exporting the model and tracking that artifact in W&B. 
+When we have selected the best-performing model among all the experiments we have performed we can therefore navigate 
+to the inference artifact for that run and mark it as **"production ready"**. In W&B, this can be accomplished for example 
+by adding the tag **`prod`** for that artifact version. Only one version of the artifact can have a certain tag, so the one 
+we marked for production is going to be the only one with that label. We can therefore refer to it, 
+like in **`model_export:prod`**.
+
+![mark-for-production.png](mark-for-production.png)

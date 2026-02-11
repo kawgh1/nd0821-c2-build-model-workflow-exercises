@@ -112,11 +112,27 @@ def export_model(run, pipe, X_val, val_pred, export_artifact):
         # function. Provide the signature computed above ("signature") as well as a few
         # examples (input_example=X_val.iloc[:2]), and use the CLOUDPICKLE serialization
         # format (mlflow.sklearn.SERIALIZATION_FORMAT_CLOUDPICKLE)
+        mlflow.sklearn.save_model(
+            pipe,
+            export_path,
+            serialization_format=mlflow.sklearn.SERIALIZATION_FORMAT_CLOUDPICKLE, # 99% of time you will not use this, but it does exist
+            signature=signature,
+            input_example=X_val.iloc[:2],
+        )
 
         # Then upload the temp_dir directory as an artifact:
         # 1. create a wandb.Artifact instance called "artifact"
         # 2. add the temp directory using .add_dir
         # 3. log the artifact to the run
+        artifact = wandb.Artifact(
+            export_artifact,
+            type="model_export",
+            description="Random Forest pipeline export"
+        )
+
+        artifact.add_dir(export_path)
+
+        run.log_artifact(artifact)
 
         # Make sure the artifact is uploaded before the temp dir
         # gets deleted
@@ -172,12 +188,13 @@ def get_training_inference_pipeline(args):
     nlp_features = sorted(model_config["features"]["nlp"])
     # This trick is needed because SimpleImputer wants a 2d input, but
     # TfidfVectorizer wants a 1d input. So we reshape in between the two steps
-    reshape_to_1d = FunctionTransformer(np.reshape, kw_args={"newshape": -1})
+    # NLP pipeline
     nlp_transformer = make_pipeline(
-        SimpleImputer(strategy="constant", fill_value=""),
-        reshape_to_1d,
+        SimpleImputer(strategy="constant", fill_value=""),  # fill missing text
+        FunctionTransformer(lambda x: x.ravel(), validate=False),  # flatten to 1D
         TfidfVectorizer(
-            binary=True, max_features=model_config["tfidf"]["max_features"]
+            binary=True,
+            max_features=model_config["tfidf"]["max_features"]
         ),
     )
     # Put the 3 tracks together into one pipeline using the ColumnTransformer
