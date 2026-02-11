@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, TfidfTransformer
 from sklearn.metrics import roc_auc_score, confusion_matrix, ConfusionMatrixDisplay
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OrdinalEncoder, StandardScaler, FunctionTransformer
@@ -25,32 +25,35 @@ def go(args):
 
     run = wandb.init(project="exercise_10", job_type="train")
 
-    logger.info("Downloading and reading test artifact")
+    logger.info("Downloading and reading test artifact...")
+    # download artifact from wandb to use in run
     train_data_path = run.use_artifact(args.train_data).file()
     df = pd.read_csv(train_data_path, low_memory=False)
 
     # Extract the target from the features
-    logger.info("Extracting target from dataframe")
-    X = df.copy()
-    y = X.pop("genre")
+    logger.info("Extracting target from dataframe...")
+    X = df.copy() # everything else is a feature
+    y = X.pop("genre") # target
 
-    logger.info("Splitting train/val")
+    # Train / Test Split
+    logger.info("Splitting train/val...")
     X_train, X_val, y_train, y_val = train_test_split(
         X, y, test_size=0.3, stratify=y, random_state=42
     )
 
-    logger.info("Setting up pipeline")
+    logger.info("Setting up pipeline...")
 
     pipe = get_inference_pipeline(args)
 
-    logger.info("Fitting")
+    logger.info("Fitting...")
     pipe.fit(X_train, y_train)
 
-    logger.info("Scoring")
+    logger.info("Scoring...")
     score = roc_auc_score(
         y_val, pipe.predict_proba(X_val), average="macro", multi_class="ovo"
     )
 
+    # Store summary Area Under the Curve metric
     run.summary["AUC"] = score
 
     # We collect the feature importance for all non-nlp features first
@@ -99,6 +102,7 @@ def go(args):
 
     fig_cm.tight_layout()
 
+    # log Confusion Matrix and Feature Importance Plot to wandb run
     run.log(
         {
             "feature_importance": wandb.Image(fig_feat_imp),
@@ -141,26 +145,29 @@ def get_inference_pipeline(args):
     ])
 
     ############# YOUR CODE HERE
-    numeric_transformer = # USE make_pipeline to create a pipeline containing a SimpleImputer using strategy=median
-                          # and a StandardScaler (you can use the default options for the latter)
+    numeric_transformer = make_pipeline(
+        SimpleImputer(strategy="median"), StandardScaler()
+    )
 
     # Textual ("nlp") preprocessing pipeline
     nlp_features = ["text_feature"]
     # This trick is needed because SimpleImputer wants a 2d input, but
     # TfidfVectorizer wants a 1d input. So we reshape in between the two steps
-    reshape_to_1d = FunctionTransformer(np.reshape, kw_args={"newshape": -1})
+    reshape_to_1d = FunctionTransformer(lambda x: x.reshape(-1))
 
     ############# YOUR CODE HERE
-    nlp_transformer = # USE make_pipeline to create a pipeline containing a SimpleImputer with strategy=constant and
-                      # fill_value="" (the empty string), followed by our custom reshape_to_1d instance, and finally
-                      # insert a TfidfVectorizer with the options binary=True
+    nlp_transformer = make_pipeline(
+        SimpleImputer(strategy="constant", fill_value=""),
+        reshape_to_1d, # expects a 1-d vector
+        TfidfVectorizer(binary=True)
+    )
 
     # Put the 3 tracks together into one pipeline using the ColumnTransformer
     # This also drops the columns that we are not explicitly transforming
     preprocessor = ColumnTransformer(
         transformers=[
             ("num", numeric_transformer, numeric_features),
-            ("cat", # COMPLETE HERE using the categorical transformer and the categorical_features,
+            ("cat", categorical_transformer, categorical_features),
             ("nlp1", nlp_transformer, nlp_features),
         ],
         remainder="drop",  # This drops the columns that we do not transform (i.e., we don't use)
@@ -176,13 +183,12 @@ def get_inference_pipeline(args):
     ############# YOUR CODE HERE
     # Append classifier to preprocessing pipeline.
     # Now we have a full prediction pipeline.
-    pipe = # CREATE a Pipeline instances with 2 steps: one step called "preprocessor" using the
-           # preprocessor instance, and another one called "classifier" using RandomForestClassifier(**model_config)
-           # (i.e., a Random Forest with the configuration we have received as input)
-           # NOTE: here you should create the Pipeline object directly, and not make_pipeline
-           # HINT: Pipeline(steps=[("preprocessor", instance1), ("classifier", LogisticRegression)]) creates a
-           #       Pipeline with two steps called "preprocessor" and "classifier" using the sklearn instances instance1
-           #       as preprocessor and a LogisticRegression as classifier
+    pipe = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor),
+            ("classifier", RandomForestClassifier(**model_config)),
+        ]
+    )
     return pipe
 
 
@@ -209,3 +215,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     go(args)
+
+
